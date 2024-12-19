@@ -15,6 +15,6 @@ interface DosenDao {
     fun getDosen(nidn: String): Flow<Dosen>
 
     @Insert
-    suspend fun insertDosen(Dosen: Dosen)
+    suspend fun insertDosen(dosen: Dosen)
 }
 

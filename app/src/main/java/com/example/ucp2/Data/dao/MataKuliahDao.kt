@@ -15,11 +15,11 @@ interface MataKuliahDao {
     fun getMataKuliah(kode: String): Flow<MataKuliah>
 
     @Delete
-    suspend fun deleteMataKuliah(MataKuliah: MataKuliah)
+    suspend fun deleteMataKuliah(mataKuliah: MataKuliah)
 
     @Update
-    suspend fun updateMataKuliah(MataKuliah: MataKuliah)
+    suspend fun updateMataKuliah(mataKuliah: MataKuliah)
 
     @Insert
-    suspend fun insertMataKuliah(MataKuliah: MataKuliah)
+    suspend fun insertMataKuliah(mataKuliah: MataKuliah)
 }
