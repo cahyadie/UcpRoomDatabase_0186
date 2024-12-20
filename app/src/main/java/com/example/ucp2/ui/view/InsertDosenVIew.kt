@@ -76,7 +76,7 @@ fun InsertDosenView(
                 judul = "Tambah Mahasiswa",
                 modifier = modifier
             )
-            InsertBodyMhs(
+            InsertBodyDosen(
                 uiState = uiState,
                 onValueChange = {updateEvent ->
                     viewModel.updateState(updateEvent)
@@ -94,7 +94,7 @@ fun InsertDosenView(
 
 
 @Composable
-fun InsertBodyMhs(
+fun InsertBodyDosen(
     modifier: Modifier = Modifier,
     onValueChange: (DosenEvent) -> Unit,
     uiState: DosenUiState,
