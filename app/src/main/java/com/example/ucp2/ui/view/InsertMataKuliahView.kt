@@ -1,6 +1,8 @@
 package com.example.ucp2.ui.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -18,8 +25,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -126,9 +136,12 @@ fun FormMataKuliah(
     mataKuliahEvent: MataKuliahEvent = MataKuliahEvent(),
     onValueChange:(MataKuliahEvent) -> Unit = {},
     errorState: FormErrorState2 = FormErrorState2(),
+    listDosen: List<String> = listOf("Dr. Budi", "Prof. Siti", "Dr. Ahmad"),
     modifier: Modifier = Modifier
 ){
     val jenis =  listOf("Wajib", "Pilihan")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedDosen by remember { mutableStateOf(mataKuliahEvent.dosenpengampu)}
 
     Column(modifier = modifier.fillMaxWidth()
     ) {
@@ -215,16 +228,46 @@ fun FormMataKuliah(
             }
         }
 
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = mataKuliahEvent.dosenpengampu,
-            onValueChange = {
-                onValueChange(mataKuliahEvent.copy(dosenpengampu = it))
-            },
-            label = { Text("Dosen Pengampu") },
-            isError = errorState.dosenpengampu != null,
-            placeholder = { Text("Masukkan nama dosen pengampu") },
-        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Dosen Pengampu")
+
+        Box(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = selectedDosen,
+                onValueChange = {},
+                label = { Text("Dosen Pengampu") },
+                isError = errorState.dosenpengampu != null,
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = true },
+                trailingIcon = {
+                    Icon(
+                        imageVector = if (expanded) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
+                        contentDescription = null
+                    )
+                }
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            listDosen.forEach { dosen ->
+                DropdownMenuItem(
+                    text = { Text(text = dosen) },
+                    onClick = {
+                        selectedDosen = dosen
+                        onValueChange(mataKuliahEvent.copy(dosenpengampu = dosen))
+                        expanded = false
+                    }
+                )
+            }
+        }
+
         Text(
             text = errorState.dosenpengampu ?: "",
             color = Color.Red
