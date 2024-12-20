@@ -75,7 +75,6 @@ fun InsertDosenView(
                 showBackButton = true,
                 judul = "Tambah Mahasiswa",
                 modifier = modifier
-
             )
             InsertBodyMhs(
                 uiState = uiState,
