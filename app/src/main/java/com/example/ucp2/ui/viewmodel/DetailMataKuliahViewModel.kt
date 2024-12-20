@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-class DetailMhsViewModel (
+class DetailMataKuliahViewModel (
     savedStatehandle: SavedStateHandle,
     private val repositoryMataKuliah: RepositoryMataKuliah,
 ): ViewModel(){
