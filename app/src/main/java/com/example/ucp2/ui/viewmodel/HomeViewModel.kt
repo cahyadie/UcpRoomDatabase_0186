@@ -1,32 +1,34 @@
 package com.example.ucp2.ui.viewmodel
 
 
-import androidx.core.app.NotificationCompat.MessagingStyle.Message
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.praktikum9.repository.RepositoryDosen
 import com.example.ucp2.Data.entity.Dosen
+import com.example.ucp2.Data.entity.MataKuliah
+import com.example.ucp2.repository.RepositoryMataKuliah
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 
-class HomeDosenViewModel(
-    private val repositoryDosen: RepositoryDosen
+class HomeViewModel(
+    private val repositoryDosen: RepositoryDosen,
+    private val repositoryMataKuliah: RepositoryMataKuliah
 ) : ViewModel(){
 
-    val HomeUiState: StateFlow<HomeUiState> = repositoryDosen.getAllDosen()
-        .filterNotNull()
-        .map {
+    val HomeUiState: StateFlow<HomeUiState> = combine(repositoryDosen.getAllDosen().filterNotNull(),
+        repositoryMataKuliah.getAllMataKuliah().filterNotNull())
+
+         {  dosenlist, matakuliahlist ->
             HomeUiState(
-                listDosen = it.toList(),
-                isLoading = false,
+                listDosen = dosenlist.toList(),
+                listMataKuliah = matakuliahlist.toList(),
+                isLoading = false
             )
         }
         .onStart {
@@ -53,6 +55,7 @@ class HomeDosenViewModel(
 
 data class HomeUiState(
     val listDosen: List<Dosen> = listOf(),
+    val listMataKuliah: List<MataKuliah> = listOf(),
     val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorMessage: String = ""
