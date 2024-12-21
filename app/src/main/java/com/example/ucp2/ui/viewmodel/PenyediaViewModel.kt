@@ -9,18 +9,30 @@ import com.example.ucp2.SaveApp
 
 object PenyediaViewModel {
     val Factory = viewModelFactory {
-        // Initializer untuk Dosen
+
+
         initializer {
-            HomeViewModel(
-                SaveApp().containerApp.repositoryDosen,
+            HomeMataKuliahViewModel(
                 SaveApp().containerApp.repositoryMataKuliah
             )
         }
 
-        // Initializer untuk MataKuliah
+        initializer {
+            DosenViewModel(
+                SaveApp().containerApp.repositoryDosen
+            )
+        }
+
+        initializer {
+            HomeDosenViewModel(
+                SaveApp().containerApp.repositoryDosen
+            )
+        }
+
         initializer {
             MataKuliahViewModel(
                 SaveApp().containerApp.repositoryMataKuliah
+                ,SaveApp().containerApp.repositoryDosen
             )
         }
 
@@ -34,7 +46,8 @@ object PenyediaViewModel {
         initializer {
             UpdateMataKuliahViewModel(
                 createSavedStateHandle(),
-                SaveApp().containerApp.repositoryMataKuliah
+                SaveApp().containerApp.repositoryMataKuliah,
+                SaveApp().containerApp.repositoryDosen
             )
         }
     }
