@@ -5,22 +5,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -36,28 +45,19 @@ import com.example.ucp2.ui.viewmodel.HomeUiState
 import com.example.ucp2.ui.viewmodel.HomeViewModel
 import com.example.ucp2.ui.viewmodel.PenyediaViewModel
 
-
-private val Typography.h6: TextStyle
-    get() = TextStyle(
-        fontSize = 20.sp,
-        fontWeight = FontWeight.SemiBold,
-        lineHeight = 28.sp,
-        letterSpacing = 0.15.sp
-    )
-
 @Composable
-fun HomeView(
+fun HomeDosenView(
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory),
     onAddDosen: () -> Unit = { },
-    onDetailClick: (String) -> Unit = { },
+    onBack: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                onBack = { },
-                showBackButton = false,
-                judul = "Daftar Dosen & Mata Kuliah",
+                showBackButton = true,
+                judul = "Daftar Dosen",
+                onBack = onBack,
                 modifier = Modifier
             )
         },
@@ -74,11 +74,10 @@ fun HomeView(
             }
         }
     ) { innerPadding ->
-        val homeUiState by viewModel.HomeUiState.collectAsState()
+        val homeUiState by viewModel.homeUiState.collectAsState()
 
         BodyHomeDosenView(
             homeUiState = homeUiState,
-            onDosenClick = { onDetailClick(it) },
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -87,9 +86,12 @@ fun HomeView(
 @Composable
 fun BodyHomeDosenView(
     homeUiState: HomeUiState,
-    onDosenClick: (String) -> Unit = { },
+    onClick: (String) -> Unit = { },
     modifier: Modifier = Modifier
 ) {
+
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     when {
         homeUiState.isLoading -> {
             Box(
@@ -112,51 +114,43 @@ fun BodyHomeDosenView(
             }
         }
 
-        homeUiState.listDosen.isEmpty() && homeUiState.listMataKuliah.isEmpty() -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Tidak ada data.",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }
-        }
-
         else -> {
-            LazyColumn(modifier = modifier) {
-                item {
-                    Text(
-                        text = "Daftar Dosen",
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(8.dp)
+            ListDosen(
+                listDsn = homeUiState.listDosen,
+                onClick = {
+                    onClick(it)
+                    println(
+                        it
                     )
-                }
-                items(homeUiState.listDosen) { dosen ->
-                    CardDosen(
-                        dosen = dosen,
-                        onClick = { onDosenClick(dosen.nidn.toString()) }
-                    )
-                }
-
-                item {
-                    Text(
-                        text = "Daftar Mata Kuliah",
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-                items(homeUiState.listMataKuliah) { mataKuliah ->
-                    CardMataKuliah(mataKuliah = mataKuliah)
-                }
-            }
+                },
+                modifier = modifier
+            )
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ListDosen(
+    listDsn: List<Dosen>,
+    modifier: Modifier = Modifier,
+    onClick: (String) -> Unit = { }
+) {
+    LazyColumn (
+        modifier = modifier
+    ) {
+        items(
+            items = listDsn,
+            itemContent = { dosen ->
+                CardDosen(
+                    dosen = dosen,
+                    onClick = { onClick(dosen.nidn)}
+                )
+            }
+        )
+    }
+}
+
+@OptIn
 @Composable
 fun CardDosen(
     dosen: Dosen,
@@ -182,28 +176,3 @@ fun CardDosen(
         }
     }
 }
-
-@Composable
-fun CardMataKuliah(
-    mataKuliah: MataKuliah,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            Text(
-                text = mataKuliah.nama,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
-            Text(
-                text = "SKS: ${mataKuliah.sks}",
-                fontSize = 16.sp
-            )
-        }
-    }
-}
-
