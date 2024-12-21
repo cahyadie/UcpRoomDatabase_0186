@@ -9,6 +9,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ fun UpdateMataKuliahView(
     val uiState = viewModel.updateUIState
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val dosenList by viewModel.dosenUpdateState.collectAsState()
 
     LaunchedEffect(uiState.snackBarMessage) {
         println("LaunchedEffect triggered")
@@ -55,7 +58,7 @@ fun UpdateMataKuliahView(
             TopAppBar(
                 onBack = onBack,
                 showBackButton = true,
-                judul = "Edit Mahasiswa",
+                judul = "Edit MataKuliah",
                 modifier = modifier
             )
         }
@@ -72,6 +75,7 @@ fun UpdateMataKuliahView(
                 onValueChange = { updatedEvent ->
                     viewModel.updateState(updatedEvent)
                 },
+                dosenList = dosenList,
                 onClick = {
                     coroutineScope.launch {
                         if (viewModel.validateFields()) {

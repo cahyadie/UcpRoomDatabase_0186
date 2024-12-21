@@ -25,14 +25,28 @@ class UpdateMataKuliahViewModel (
     private val repositoryDosen: RepositoryDosen
 ) : ViewModel() {
 
-    val dosenState: StateFlow<List<Dosen>> = repositoryDosen.getAllDosen()
+    val dosenUpdateState: StateFlow<List<Dosen>> = repositoryDosen.getAllDosen()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
+    var dosenListUpdate by mutableStateOf<List<String>>(emptyList())
+    private set
 
+    fun fetchDosenList(){
+        viewModelScope.launch {
+            try {
+                repositoryDosen.getAllDosen()
+                    .collect{dosenList ->
+                        dosenListUpdate = dosenList.map { it.nama }
+                    }
+            } catch (e: Exception) {
+                dosenListUpdate = emptyList()
+            }
+        }
+    }
 
     var updateUIState by mutableStateOf(MataKuliahUiState())
         private set
