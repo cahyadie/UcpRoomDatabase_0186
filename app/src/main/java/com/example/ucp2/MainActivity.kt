@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.ucp2.ui.Navigation.PengelolaHalaman
 import com.example.ucp2.ui.theme.UCP2Theme
-import com.example.ucp2.ui.view.HomeView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -6,23 +6,38 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ucp2.repository.RepositoryDosen
+import com.example.ucp2.Data.entity.Dosen
 import com.example.ucp2.Data.entity.MataKuliah
 import com.example.ucp2.repository.RepositoryMataKuliah
 import com.example.ucp2.ui.Navigation.Navigasi
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
 class UpdateMataKuliahViewModel (
     savedStateHandle: SavedStateHandle,
-    private val repositoryMataKuliah: RepositoryMataKuliah
+    private val repositoryMataKuliah: RepositoryMataKuliah,
+    private val repositoryDosen: RepositoryDosen
 ) : ViewModel() {
+
+    val dosenState: StateFlow<List<Dosen>> = repositoryDosen.getAllDosen()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+
 
     var updateUIState by mutableStateOf(MataKuliahUiState())
         private set
 
-    private val _kode: String = checkNotNull(savedStateHandle[Navigasi.DestinasiUpdate.Kode])
+    private val _kode: String = checkNotNull(savedStateHandle[Navigasi.DestinasiUpdateMataKuliah.Kode])
 
     init {
         viewModelScope.launch {

@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.praktikum9.repository.RepositoryDosen
+import com.example.ucp2.repository.RepositoryDosen
 import com.example.ucp2.Data.entity.Dosen
 import kotlinx.coroutines.launch
 

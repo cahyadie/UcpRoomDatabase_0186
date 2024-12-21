@@ -1,7 +1,7 @@
 package com.example.ucp2
 
 import android.app.Application
-import com.example.praktikum9.Depedenciesinjection.ContainerApp
+import com.example.ucp2.Depedenciesinjection.ContainerApp
 
 class SaveApp: Application()  {
     lateinit var containerApp: ContainerApp

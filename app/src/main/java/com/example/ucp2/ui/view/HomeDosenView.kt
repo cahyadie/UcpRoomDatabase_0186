@@ -41,13 +41,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ucp2.Data.entity.Dosen
 import com.example.ucp2.Data.entity.MataKuliah
 import com.example.ucp2.ui.costumwidget.TopAppBar
-import com.example.ucp2.ui.viewmodel.HomeUiState
-import com.example.ucp2.ui.viewmodel.HomeViewModel
+import com.example.ucp2.ui.viewmodel.HomeDosenState
+import com.example.ucp2.ui.viewmodel.HomeDosenViewModel
 import com.example.ucp2.ui.viewmodel.PenyediaViewModel
 
 @Composable
 fun HomeDosenView(
-    viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory),
+    viewModel: HomeDosenViewModel = viewModel(factory = PenyediaViewModel.Factory),
     onAddDosen: () -> Unit = { },
     onBack: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -85,7 +85,7 @@ fun HomeDosenView(
 
 @Composable
 fun BodyHomeDosenView(
-    homeUiState: HomeUiState,
+    homeUiState: HomeDosenState,
     onClick: (String) -> Unit = { },
     modifier: Modifier = Modifier
 ) {

@@ -3,7 +3,7 @@ package com.example.ucp2.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.praktikum9.repository.RepositoryDosen
+import com.example.ucp2.repository.RepositoryDosen
 import com.example.ucp2.Data.entity.Dosen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,25 +14,25 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 
-class HomeViewModel(
+class HomeDosenViewModel(
     private val repositoryDosen: RepositoryDosen,
 ) : ViewModel(){
 
-    val homeUiState: StateFlow<HomeUiState> = repositoryDosen.getAllDosen()
+    val homeUiState: StateFlow<HomeDosenState> = repositoryDosen.getAllDosen()
         .filterNotNull()
         .map {
-            HomeUiState(
+            HomeDosenState(
                 listDosen = it.toList(),
                 isLoading = false
             )
         }
         .onStart {
-            emit(HomeUiState(isLoading = true))
+            emit(HomeDosenState(isLoading = true))
             delay(900)
         }
         .catch {
             emit(
-                HomeUiState(
+                HomeDosenState(
                     isLoading = false,
                     isError = true,
                     errorMessage = it.message ?: "Terjadi Kesalahan"
@@ -42,14 +42,14 @@ class HomeViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = HomeUiState(
+            initialValue = HomeDosenState(
                 isLoading = true,
             )
         )
 
 }
 
-data class HomeUiState(
+data class HomeDosenState(
     val listDosen: List<Dosen> = listOf(),
     val isLoading: Boolean = false,
     val isError: Boolean = false,

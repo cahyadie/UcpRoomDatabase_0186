@@ -1,10 +1,10 @@
-package com.example.praktikum9.Depedenciesinjection
+package com.example.ucp2.Depedenciesinjection
 
 import android.content.Context
-import com.example.praktikum9.repository.LocalRepositoryDosen
-import com.example.praktikum9.repository.LocalRepositoryMataKuliah
-import com.example.praktikum9.repository.RepositoryDosen
+import com.example.ucp2.repository.LocalRepositoryMataKuliah
 import com.example.ucp2.Data.database.DatabaseAll
+import com.example.ucp2.repository.LocalRepositoryDosen
+import com.example.ucp2.repository.RepositoryDosen
 import com.example.ucp2.repository.RepositoryMataKuliah
 
 interface InterfaceContainerApp{
