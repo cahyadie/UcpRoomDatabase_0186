@@ -36,7 +36,7 @@ import com.example.ucp2.ui.viewmodel.PenyediaViewModel
 import kotlinx.coroutines.launch
 
 
-object DestinasiInsert : Navigasi {
+object DestinasiInsertDosen : Navigasi {
     override val route: String = "insert_dosen"
 }
 
@@ -73,7 +73,7 @@ fun InsertDosenView(
             TopAppBar(
                 onBack = onBack,
                 showBackButton = true,
-                judul = "Tambah Mahasiswa",
+                judul = "Tambah Dosen",
                 modifier = modifier
             )
             InsertBodyDosen(
@@ -83,9 +83,15 @@ fun InsertDosenView(
                 },
                 onClick = {
                     coroutineScope.launch {
-                        viewModel.saveData()
+                        try {
+                            viewModel.saveData()  // Simpan data
+                            onNavigate()  // Navigasi setelah data berhasil disimpan
+                        } catch (e: Exception) {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Terjadi kesalahan: ${e.message}")
+                            }
+                        }
                     }
-                    onNavigate()
                 }
             )
         }
