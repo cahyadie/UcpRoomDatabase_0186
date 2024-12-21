@@ -10,6 +10,7 @@ interface Navigasi {
     object DestinasiDetail : Navigasi {
         override val route = "detail"
         const val Kode = "kode"
+        const val Nidn = "nidn"
         val routeWithArg = "$route/{$Kode}"
     }
 
