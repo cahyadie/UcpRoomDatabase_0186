@@ -6,13 +6,40 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ucp2.Data.entity.Dosen
 import com.example.ucp2.Data.entity.MataKuliah
+import com.example.ucp2.repository.RepositoryDosen
 import com.example.ucp2.repository.RepositoryMataKuliah
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-class MataKuliahViewModel(private val repositoryMataKuliah: RepositoryMataKuliah) : ViewModel(){
+class MataKuliahViewModel(private val repositoryMataKuliah: RepositoryMataKuliah, private val repositoryDosen: RepositoryDosen) : ViewModel(){
     var uiState by mutableStateOf(MataKuliahUiState())
+
+    val dosenListState:  StateFlow<List<Dosen>> = repositoryDosen.getAllDosen()
+        .stateIn(
+            scope = viewModelScope,
+            started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
+            initialValue = listOf()
+        )
+
+    var dosenListInsert by mutableStateOf<List<String>>(emptyList())
+    private set
+
+    fun fetchDosenList(){
+        viewModelScope.launch {
+            try {
+                repositoryDosen.getAllDosen()
+                    .collect{dosenList ->
+                        dosenListInsert = dosenList.map { it.nama }
+                    }
+            } catch (e: Exception) {
+                dosenListInsert = emptyList()
+            }
+        }
+    }
 
     fun updateState(mataKuliahEvent: MataKuliahEvent){
         uiState = uiState.copy(
