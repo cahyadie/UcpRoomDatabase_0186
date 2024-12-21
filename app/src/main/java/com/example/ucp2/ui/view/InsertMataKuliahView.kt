@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -26,6 +24,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ucp2.Data.entity.Dosen
 import com.example.ucp2.ui.Navigation.Navigasi
 import com.example.ucp2.ui.costumwidget.TopAppBar
 import com.example.ucp2.ui.viewmodel.FormErrorState2
@@ -62,6 +62,11 @@ fun InsertMataKuliahView(
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val dosenList by viewModel.dosenListState.collectAsState()
+
+    LaunchedEffect(Unit){
+        viewModel.fetchDosenList()
+    }
 
     LaunchedEffect(uiState.snackBarMessage) {
         uiState.snackBarMessage?.let { message ->
@@ -92,6 +97,7 @@ fun InsertMataKuliahView(
                 onValueChange = {updateEvent ->
                     viewModel.updateState(updateEvent)
                 },
+                dosenList = dosenList,
                 onClick = {
                     coroutineScope.launch {
                         viewModel.saveData()
@@ -107,6 +113,7 @@ fun InsertMataKuliahView(
 @Composable
 fun InsertMataKuliah(
     modifier: Modifier = Modifier,
+    dosenList: List<Dosen>,
     onValueChange: (MataKuliahEvent) -> Unit,
     uiState: MataKuliahUiState,
     onClick:() -> Unit
@@ -119,6 +126,7 @@ fun InsertMataKuliah(
         FormMataKuliah(
             mataKuliahEvent = uiState.mataKuliahEvent,
             onValueChange = onValueChange,
+            dosenList = dosenList,
             errorState = uiState.isEntryValid,
             modifier = Modifier.fillMaxWidth()
         )
@@ -137,7 +145,7 @@ fun FormMataKuliah(
     mataKuliahEvent: MataKuliahEvent = MataKuliahEvent(),
     onValueChange:(MataKuliahEvent) -> Unit = {},
     errorState: FormErrorState2 = FormErrorState2(),
-    listDosen: List<String> = listOf("Dr. Budi", "Prof. Siti", "Dr. Ahmad"),
+    dosenList: List<Dosen>,
     modifier: Modifier = Modifier
 ){
     val jenis =  listOf("Wajib", "Pilihan")
@@ -232,46 +240,39 @@ fun FormMataKuliah(
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Dosen Pengampu")
-
+        var selectedDosen by remember { mutableStateOf("") }
+        var expanded by remember { mutableStateOf(false) }
         Box(modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(
                 value = selectedDosen,
-                onValueChange = {},
-                label = { Text("Dosen Pengampu") },
-                isError = errorState.dosenpengampu != null,
+                onValueChange = { },
+                label = { Text("Pilih Dosen Pengampu") },
                 readOnly = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { expanded = true },
+                modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    Icon(
-                        imageVector = if (expanded) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
-                        contentDescription = null
+                    androidx.compose.material3.Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable { expanded = true }
                     )
                 }
             )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            listDosen.forEach { dosen ->
-                DropdownMenuItem(
-                    text = { Text(text = dosen) },
-                    onClick = {
-                        selectedDosen = dosen
-                        onValueChange(mataKuliahEvent.copy(dosenpengampu = dosen))
-                        expanded = false
-                    }
-                )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                dosenList.forEach { dosen ->
+                    DropdownMenuItem(
+                        text = { Text(dosen.nama) },
+                        onClick = {
+                            selectedDosen = dosen.nama
+                            onValueChange(mataKuliahEvent.copy(dosenpengampu = dosen.nama))
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
-
-        Text(
-            text = errorState.dosenpengampu ?: "",
-            color = Color.Red
-        )
     }
 }
