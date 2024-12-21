@@ -3,21 +3,28 @@ package com.example.ucp2.ui.Navigation
 interface Navigasi {
     val route: String
 
-    object DestinasiHome : Navigasi {
-        override val route = "home"
+    object DestinasiMenu : Navigasi {
+        override val route = "Menu"
     }
 
-    object DestinasiDetail : Navigasi {
+    object DestinasiHomeDosen : Navigasi {
+        override val route = "home_dosen"
+    }
+
+    object DestinasiHomeMataKuliah : Navigasi {
+        override val route = "home_mata_kuliah"
+    }
+
+
+    object DestinasiDetailMataKuliah : Navigasi {
         override val route = "detail"
         const val Kode = "kode"
-        const val Nidn = "nidn"
         val routeWithArg = "$route/{$Kode}"
     }
 
-    object DestinasiUpdate : Navigasi {
+    object DestinasiUpdateMataKuliah : Navigasi {
         override val route = "update"
-        const val Nidn = "nidn"
         const val Kode = "kode"
-        val routeWithArg = "$route/{$Nidn}/{$Kode}"
+        val routeWithArg = "$route/{$Kode}"
     }
 }
